@@ -9,5 +9,8 @@ public class Profesor {
     @JsonProperty("idProfesor") 
     private Integer id;
     private String nombre;
+    private String correo;
+    private String cubiculo;
+    private boolean activo;
     private int idUsuario;
 }

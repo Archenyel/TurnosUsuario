@@ -4,6 +4,8 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import mx.edu.uteq.backend.model.dto.Profesor;
 
@@ -12,4 +14,6 @@ public interface ProfesorRest {
     @GetMapping("/api/profesor/usuario/{idUsuario}")
     ResponseEntity<Profesor> getIdsByUsuarioId(@PathVariable("idUsuario") Integer idUsuario);
 
+    @PutMapping("/api/profesor/{idProfesor}")
+    ResponseEntity<Profesor> updateProfesor(@PathVariable("idProfesor") Integer idProfesor, @RequestBody Profesor profesor);
 }

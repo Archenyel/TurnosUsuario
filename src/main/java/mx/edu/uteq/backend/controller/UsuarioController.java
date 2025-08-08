@@ -15,8 +15,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import mx.edu.uteq.backend.client.ProfesorRest;
 import mx.edu.uteq.backend.model.Entity.Usuario;
 import mx.edu.uteq.backend.model.Repositroty.UsuarioRepo;
+import mx.edu.uteq.backend.model.dto.Profesor;
+import mx.edu.uteq.backend.model.dto.UsuarioProfesorDTO;
 
 
 @RestController
@@ -25,6 +28,9 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioRepo usuarioRepo;
+
+    @Autowired
+    private ProfesorRest profesorRest;
 
     @GetMapping
     public List<Usuario> getAll() {
@@ -46,8 +52,19 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody Usuario usuario) {
-        Usuario usuarioDB = usuarioRepo.save(usuario);
+    public ResponseEntity<?> create(@RequestBody UsuarioProfesorDTO dto) {
+        Usuario usuarioDB = usuarioRepo.save(dto.getUsuario());
+
+        // Actualiza el profesor con el nuevo id_usuario
+        if (dto.getIdProfesor() != null) {
+            ResponseEntity<Profesor> response = profesorRest.getIdsByUsuarioId(dto.getIdProfesor());
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                Profesor profesor = response.getBody();
+                profesor.setIdUsuario(usuarioDB.getId());
+                profesorRest.updateProfesor(profesor.getId(), profesor);
+            }
+        }
+
         return ResponseEntity.ok(usuarioDB);
     }
 
