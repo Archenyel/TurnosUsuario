@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,7 +51,7 @@ public class UsuarioController {
     }
 
     @GetMapping("/nombre/{username}")
-    public ResponseEntity<?> getByName(@PathVariable String username){
+    public ResponseEntity<?> getByName(@PathVariable String username) {
         return usuarioRepo.findByNombre(username)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -58,7 +59,7 @@ public class UsuarioController {
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody JsonNode body) {
-    logger.info("Solicitud POST recibida en /api/usuario: {}", body.toString());
+        logger.info("Solicitud POST recibida en /api/usuario: {}", body.toString());
         System.out.println("Solicitud POST recibida en /api/usuario: " + body.toString());
         // Extraer usuario
         Usuario usuario = new Usuario();
@@ -69,16 +70,18 @@ public class UsuarioController {
 
         Usuario usuarioDB = usuarioRepo.save(usuario);
 
-        // Si viene idProfesor, enviar idProfesor y idUsuario al microservicio profesores
+        // Si viene idProfesor, enviar idProfesor y idUsuario al microservicio
+        // profesores
         if (body.has("idProfesor") && !body.get("idProfesor").isNull()) {
             int idProfesor = body.get("idProfesor").asInt();
             int idUsuario = usuarioDB.getId();
-            logger.info("Llamando a profesorRest.asignarUsuarioAProfesor con idProfesor={} y idUsuario={}", idProfesor, idUsuario);
+            logger.info("Llamando a profesorRest.asignarUsuarioAProfesor con idProfesor={} y idUsuario={}", idProfesor,
+                    idUsuario);
             profesorRest.asignarUsuarioAProfesor(idProfesor, idUsuario);
         }
 
         return ResponseEntity.ok(usuarioDB);
-    
+
     }
 
     @PutMapping("/{id}")
@@ -93,6 +96,16 @@ public class UsuarioController {
                     return ResponseEntity.ok(updatedUsuario);
                 })
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteUsuario(@PathVariable int id) {
+        if (usuarioRepo.existsById(id)) {
+            usuarioRepo.deleteById(id);
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
 }
