@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import mx.edu.uteq.backend.model.dto.Profesor;
 
-@FeignClient(name = "servicio-profesores", url = "http://localhost:8085") 
+@FeignClient(name = "servicio-profesores", url = "ms-profesores:8085") 
 public interface ProfesorRest {
     @PutMapping("/api/profesor/{idProfesor}/asignar-usuario/{idUsuario}")
     ResponseEntity<Void> asignarUsuarioAProfesor(@PathVariable("idProfesor") int idProfesor, @PathVariable("idUsuario") int idUsuario);
