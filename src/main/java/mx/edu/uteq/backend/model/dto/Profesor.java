@@ -13,4 +13,5 @@ public class Profesor {
     private String cubiculo;
     private boolean activo;
     private int idUsuario;
+    // Si el microservicio de profesores retorna más campos, agregarlos aquí.
 }

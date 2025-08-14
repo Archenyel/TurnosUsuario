@@ -1,11 +1,12 @@
 package mx.edu.uteq.backend.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.jwt.Jwt;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,17 +15,21 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import mx.edu.uteq.backend.client.ProfesorRest;
 import mx.edu.uteq.backend.model.Entity.Usuario;
 import mx.edu.uteq.backend.model.Repositroty.UsuarioRepo;
 import mx.edu.uteq.backend.model.dto.Profesor;
-import mx.edu.uteq.backend.model.dto.UsuarioProfesorDTO;
+// import mx.edu.uteq.backend.model.dto.UsuarioProfesorDTO;
 
-
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/usuario")
 public class UsuarioController {
+
+    private static final Logger logger = LoggerFactory.getLogger(UsuarioController.class);
 
     @Autowired
     private UsuarioRepo usuarioRepo;
@@ -52,20 +57,28 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody UsuarioProfesorDTO dto) {
-        Usuario usuarioDB = usuarioRepo.save(dto.getUsuario());
+    public ResponseEntity<?> create(@RequestBody JsonNode body) {
+    logger.info("Solicitud POST recibida en /api/usuario: {}", body.toString());
+        System.out.println("Solicitud POST recibida en /api/usuario: " + body.toString());
+        // Extraer usuario
+        Usuario usuario = new Usuario();
+        usuario.setNombre(body.get("nombre").asText());
+        usuario.setContrasena(body.get("contrasena").asText());
+        usuario.setEstatus(body.get("estatus").asBoolean());
+        usuario.setRol(body.get("rol").asText());
 
-        // Actualiza el profesor con el nuevo id_usuario
-        if (dto.getIdProfesor() != null) {
-            ResponseEntity<Profesor> response = profesorRest.getIdsByUsuarioId(dto.getIdProfesor());
-            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                Profesor profesor = response.getBody();
-                profesor.setIdUsuario(usuarioDB.getId());
-                profesorRest.updateProfesor(profesor.getId(), profesor);
-            }
+        Usuario usuarioDB = usuarioRepo.save(usuario);
+
+        // Si viene idProfesor, enviar idProfesor y idUsuario al microservicio profesores
+        if (body.has("idProfesor") && !body.get("idProfesor").isNull()) {
+            int idProfesor = body.get("idProfesor").asInt();
+            int idUsuario = usuarioDB.getId();
+            logger.info("Llamando a profesorRest.asignarUsuarioAProfesor con idProfesor={} y idUsuario={}", idProfesor, idUsuario);
+            profesorRest.asignarUsuarioAProfesor(idProfesor, idUsuario);
         }
 
         return ResponseEntity.ok(usuarioDB);
+    
     }
 
     @PutMapping("/{id}")

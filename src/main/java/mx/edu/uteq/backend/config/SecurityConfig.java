@@ -22,16 +22,13 @@ public class SecurityConfig {
         http
         .cors(cors -> cors.configurationSource(corsConfigurationSource()))
         .authorizeHttpRequests((authHttp) -> authHttp
-            .requestMatchers(HttpMethod.GET, "/api/usuario/**").permitAll()
-            .requestMatchers(HttpMethod.GET, "/api/usuario").hasRole("ADMIN")
-            .requestMatchers(HttpMethod.POST, "/api/usuario").hasRole("ADMIN")
-            .requestMatchers(HttpMethod.PUT, "/api/usuario/**").hasRole("ADMIN")
+            .requestMatchers("/api/usuario/**").permitAll() // Permitir todos los métodos para /api/usuario/**
             .anyRequest().authenticated())
             .csrf(csrf -> csrf.disable())
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .oauth2ResourceServer(resourceServer -> 
-                resourceServer.jwt(jwt -> 
-                    jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())));
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                // .oauth2ResourceServer(resourceServer -> 
+                //     resourceServer.jwt(jwt -> 
+                //         jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())));
 
         return http.build();
     }

@@ -1,4 +1,4 @@
-package main.java.mx.edu.uteq.backend.model.dto;
+package mx.edu.uteq.backend.model.dto;
 
 import lombok.Data;
 import mx.edu.uteq.backend.model.Entity.Usuario;
@@ -6,5 +6,5 @@ import mx.edu.uteq.backend.model.Entity.Usuario;
 @Data
 public class UsuarioProfesorDTO {
     private Usuario usuario;
-    private Integer idProfesor;
+    private Profesor profesor; // Cambia idProfesor por Profesor
 }

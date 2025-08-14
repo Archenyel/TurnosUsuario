@@ -11,6 +11,9 @@ import mx.edu.uteq.backend.model.dto.Profesor;
 
 @FeignClient(name = "servicio-profesores", url = "http://localhost:8085") 
 public interface ProfesorRest {
+    @PutMapping("/api/profesor/{idProfesor}/asignar-usuario/{idUsuario}")
+    ResponseEntity<Void> asignarUsuarioAProfesor(@PathVariable("idProfesor") int idProfesor, @PathVariable("idUsuario") int idUsuario);
+    
     @GetMapping("/api/profesor/usuario/{idUsuario}")
     ResponseEntity<Profesor> getIdsByUsuarioId(@PathVariable("idUsuario") Integer idUsuario);
 
