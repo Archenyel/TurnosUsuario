@@ -25,7 +25,7 @@ import mx.edu.uteq.backend.model.Repositroty.UsuarioRepo;
 import mx.edu.uteq.backend.model.dto.Profesor;
 // import mx.edu.uteq.backend.model.dto.UsuarioProfesorDTO;
 
-@CrossOrigin(origins = "http://localhost:5173")
+//@CrossOrigin(origins = "http://4.204.24.100:80")
 @RestController
 @RequestMapping("/api/usuario")
 public class UsuarioController {
