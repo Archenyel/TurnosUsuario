@@ -16,38 +16,36 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 public class SecurityConfig {
-    
+
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-        .authorizeHttpRequests((authHttp) -> authHttp
-            .requestMatchers("/api/usuario/**").permitAll() // Permitir todos los métodos para /api/usuario/**
-            .anyRequest().authenticated())
-            .csrf(csrf -> csrf.disable())
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-                // .oauth2ResourceServer(resourceServer -> 
-                //     resourceServer.jwt(jwt -> 
-                //         jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())));
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .authorizeHttpRequests((authHttp) -> authHttp
+                        .requestMatchers("/api/usuario/**").permitAll() // Permitir todos los métodos para
+                                                                        // /api/usuario/**
+                        .anyRequest().authenticated())
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        // .oauth2ResourceServer(resourceServer ->
+        // resourceServer.jwt(jwt ->
+        // jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())));
 
         return http.build();
     }
 
     // Bean para la configuración de CORS
- @Bean
- CorsConfigurationSource corsConfigurationSource() {
- CorsConfiguration configuration = new CorsConfiguration();
- configuration.setAllowedOrigins(Arrays.asList(
-     "http://localhost:5173",
-     "http://frontend:5173"
- ));
- configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
- configuration.setAllowedHeaders(Arrays.asList("*"));
- configuration.setAllowCredentials(true);
- UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
- source.registerCorsConfiguration("/**", configuration);
-return source;
- }
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://4.204.24.100:80"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
